@@ -1,0 +1,2 @@
+Export-Package: com.peergreen.webcontainer;version=${webcontainer-api.version}
+Private-Package: com.peergreen.webcontainer.base.*
