@@ -35,9 +35,9 @@ public class WebApplicationLifeCyclePhaseProvider implements FacetLifeCyclePhase
         deployPhases.add("START");
 
         this.updatePhases = new ArrayList<String>();
-        deployPhases.add("STOP");
-        deployPhases.add("PARSE_XML");
-        deployPhases.add("START");
+        updatePhases.add("STOP");
+        updatePhases.add("PARSE_XML");
+        updatePhases.add("START");
 
 
         this.undeployPhases = new ArrayList<String>();
