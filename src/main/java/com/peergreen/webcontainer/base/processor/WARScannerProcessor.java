@@ -17,18 +17,29 @@ package com.peergreen.webcontainer.base.processor;
 
 import java.net.URI;
 
-import com.peergreen.deployment.Processor;
+import org.apache.felix.ipojo.annotations.Component;
+import org.apache.felix.ipojo.annotations.Instantiate;
+
+import com.peergreen.deployment.DiscoveryPhasesLifecycle;
 import com.peergreen.deployment.ProcessorContext;
 import com.peergreen.deployment.ProcessorException;
 import com.peergreen.deployment.facet.archive.Archive;
 import com.peergreen.deployment.facet.archive.ArchiveException;
+import com.peergreen.deployment.processor.Discovery;
+import com.peergreen.deployment.processor.Uri;
+import com.peergreen.deployment.processor.handler.Processor;
 import com.peergreen.webcontainer.WebApplication;
 
 /**
  * WAR scanner.
  * @author Florent Benoit
  */
-public class WARScannerProcessor implements Processor<Archive> {
+@Component
+@Instantiate
+@Processor
+@Uri(extension = "war")
+@Discovery(DiscoveryPhasesLifecycle.FACET_SCANNER)
+public class WARScannerProcessor {
 
 
     public WARScannerProcessor() {
@@ -38,7 +49,6 @@ public class WARScannerProcessor implements Processor<Archive> {
     /**
      * If the archive is a war file then we will parse the web.xml and flag the archive as being a Web Application
      */
-    @Override
     public void handle(Archive archive, ProcessorContext processorContext) throws ProcessorException {
 
         DefaultWebApplication webApplication = new DefaultWebApplication();
