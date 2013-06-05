@@ -15,8 +15,14 @@
  */
 package com.peergreen.webcontainer.base.processor;
 
+import java.io.File;
 import java.net.URI;
+import java.util.List;
+import java.util.Map;
 
+import com.peergreen.deployment.Artifact;
+import com.peergreen.deployment.facet.archive.Archive;
+import com.peergreen.injection.AnnotatedClass;
 import com.peergreen.webcontainer.WebApplication;
 
 public class DefaultWebApplication implements WebApplication {
@@ -24,6 +30,20 @@ public class DefaultWebApplication implements WebApplication {
     private String contextPath;
 
     private URI uri;
+
+    private ClassLoader classLoader;
+    private ClassLoader parentClassLoader;
+
+    private File unpackedDirectory;
+
+    private final Artifact artifact;
+
+    private Map<String, AnnotatedClass> annotatedClasses;
+
+    public DefaultWebApplication(Artifact artifact) {
+        this.artifact = artifact;
+    }
+
 
     @Override
     public URI getURI() {
@@ -35,12 +55,68 @@ public class DefaultWebApplication implements WebApplication {
     }
 
 
+    @Override
     public String getContextPath() {
         return contextPath;
     }
 
+    public void setAnnotatedClasses(Map<String, AnnotatedClass> annotatedClasses) {
+        this.annotatedClasses = annotatedClasses;
+    }
+
+
     public void setContextPath(String contextPath) {
         this.contextPath = contextPath;
     }
+
+    @Override
+    public List<Archive> getLibraries() {
+        return null;
+    }
+
+    @Override
+    public ClassLoader getClassLoader() {
+        return classLoader;
+    }
+
+    @Override
+    public void setClassLoader(ClassLoader classLoader) {
+        this.classLoader = classLoader;
+    }
+
+    @Override
+    public File getUnpackedDirectory() {
+        return unpackedDirectory;
+    }
+
+    @Override
+    public void setUnpackedDirectory(File unpackedDirectory) {
+        this.unpackedDirectory = unpackedDirectory;
+    }
+
+
+    @Override
+    public Artifact getArtifact() {
+        return artifact;
+    }
+
+
+    @Override
+    public Map<String, AnnotatedClass> getAnnotatedClasses() {
+        return annotatedClasses;
+    }
+
+
+    @Override
+    public ClassLoader getParentClassLoader() {
+        return parentClassLoader;
+    }
+
+
+    @Override
+    public void setParentClassLoader(ClassLoader parentClassLoader) {
+        this.parentClassLoader = parentClassLoader;
+    }
+
 
 }

@@ -15,7 +15,13 @@
  */
 package com.peergreen.webcontainer.base.processor;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URI;
+import java.util.jar.JarFile;
+
+import org.ow2.util.file.FileUtils;
+import org.ow2.util.file.FileUtilsException;
 
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
@@ -49,7 +55,7 @@ public class WARScannerProcessor {
      */
     public void handle(Archive archive, ProcessorContext processorContext) throws ProcessorException {
 
-        DefaultWebApplication webApplication = new DefaultWebApplication();
+        DefaultWebApplication webApplication = new DefaultWebApplication(processorContext.getArtifact());
 
         // Sets the URI of the web application
         URI uri;
@@ -72,6 +78,7 @@ public class WARScannerProcessor {
             contextPath = contextPath.substring(lastSlash + 1, contextPath.length());
         }
         // remove the .extension
+        String fileName = contextPath;
         int dot = contextPath.lastIndexOf(".");
         if (dot != -1) {
             contextPath = contextPath.substring(0, dot);
@@ -79,10 +86,33 @@ public class WARScannerProcessor {
         contextPath = "/".concat(contextPath);
         webApplication.setContextPath(contextPath);
 
+        // Path to the war file
+        File path = new File(uri.getPath());
+
+        // Needs to unpack war if not yet unpacked
+        if (path.isFile()) {
+            // unpack
+            File f = new File(System.getProperty("java.io.tmpdir"), "unpacked");
+            File unpacked = new File(f, fileName);
+            System.out.println("Unpacking jar to " + unpacked);
+            try {
+                FileUtils.unpack(new JarFile(uri.getPath()), unpacked);
+            } catch (FileUtilsException | IOException e) {
+                throw new ProcessorException("Unable to unpack the jar", e);
+            }
+            webApplication.setUnpackedDirectory(unpacked);
+        } else {
+            webApplication.setUnpackedDirectory(path);
+        }
+
+
 
         // Add facet
         processorContext.addFacet(WebApplication.class, webApplication);
     }
+
+
+
 
 
 }
