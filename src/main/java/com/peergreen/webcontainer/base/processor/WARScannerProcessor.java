@@ -27,15 +27,13 @@ import com.peergreen.deployment.facet.archive.Archive;
 import com.peergreen.deployment.facet.archive.ArchiveException;
 import com.peergreen.deployment.processor.Discovery;
 import com.peergreen.deployment.processor.Uri;
-import com.peergreen.deployment.processor.handler.Processor;
+import com.peergreen.deployment.processor.Processor;
 import com.peergreen.webcontainer.WebApplication;
 
 /**
  * WAR scanner.
  * @author Florent Benoit
  */
-@Component
-@Instantiate
 @Processor
 @Uri(extension = "war")
 @Discovery(DiscoveryPhasesLifecycle.FACET_SCANNER)
