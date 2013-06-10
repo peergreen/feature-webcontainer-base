@@ -40,6 +40,8 @@ public class DefaultWebApplication implements WebApplication {
 
     private Map<String, AnnotatedClass> annotatedClasses;
 
+    private String archiveName;
+
     public DefaultWebApplication(Artifact artifact) {
         this.artifact = artifact;
     }
@@ -60,6 +62,7 @@ public class DefaultWebApplication implements WebApplication {
         return contextPath;
     }
 
+    @Override
     public void setAnnotatedClasses(Map<String, AnnotatedClass> annotatedClasses) {
         this.annotatedClasses = annotatedClasses;
     }
@@ -118,5 +121,14 @@ public class DefaultWebApplication implements WebApplication {
         this.parentClassLoader = parentClassLoader;
     }
 
+
+    @Override
+    public String getArchiveName() {
+        return archiveName;
+    }
+
+    public void setArchiveName(String archiveName) {
+        this.archiveName = archiveName;
+    }
 
 }
