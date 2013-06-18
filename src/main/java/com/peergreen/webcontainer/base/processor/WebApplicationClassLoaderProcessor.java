@@ -15,9 +15,12 @@
  */
 package com.peergreen.webcontainer.base.processor;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.peergreen.deployment.ProcessorContext;
 import com.peergreen.deployment.ProcessorException;
@@ -46,13 +49,20 @@ public class WebApplicationClassLoaderProcessor {
             parentClassLoader = new DynamicImportAllClassLoader();
         }
 
-        // Create a WebApp ClassLoader
-        ClassLoader appClassLoader;
+        // WEB-INF/classes
+        File rootWar = webApplication.getUnpackedDirectory();
+        File webInfClasses = new File(rootWar + File.separator + "WEB-INF" + File.separator + "classes");
+        List<URL> urls = new ArrayList<>();
         try {
-            appClassLoader = new URLClassLoader(new URL[] {webApplication.getURI().toURL()}, parentClassLoader);
+            urls.add(rootWar.toURI().toURL());
+            urls.add(webInfClasses.toURI().toURL());
         } catch (MalformedURLException e) {
             throw new ProcessorException("Unable to create application classLoader", e);
         }
+
+        // Create a WebApp ClassLoader
+        ClassLoader appClassLoader;
+            appClassLoader = new URLClassLoader(urls.toArray(new URL[urls.size()]), parentClassLoader);
         webApplication.setClassLoader(appClassLoader);
 
     }
