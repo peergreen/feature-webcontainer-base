@@ -33,6 +33,7 @@ public class WebApplicationLifeCyclePhaseProvider implements FacetLifeCyclePhase
         deployPhases.add("UNPACK");
         deployPhases.add("CLASSLOADER");
         deployPhases.add("METADATA");
+        deployPhases.add("JAVA_CONTEXT");
         deployPhases.add("INIT");
         deployPhases.add("START");
 

@@ -20,6 +20,8 @@ import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
+import javax.naming.Context;
+
 import com.peergreen.deployment.Artifact;
 import com.peergreen.deployment.facet.archive.Archive;
 import com.peergreen.injection.AnnotatedClass;
@@ -41,6 +43,8 @@ public class DefaultWebApplication implements WebApplication {
     private Map<String, AnnotatedClass> annotatedClasses;
 
     private String archiveName;
+
+    private Context javaContext;
 
     public DefaultWebApplication(Artifact artifact) {
         this.artifact = artifact;
@@ -129,6 +133,18 @@ public class DefaultWebApplication implements WebApplication {
 
     public void setArchiveName(String archiveName) {
         this.archiveName = archiveName;
+    }
+
+
+    @Override
+    public Context getJavaContext() {
+        return javaContext;
+    }
+
+
+    @Override
+    public void setJavaContext(Context javaContext) {
+        this.javaContext = javaContext;
     }
 
 }

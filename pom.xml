@@ -30,6 +30,7 @@
 
   <properties>
     <webcontainer-api.version>1.0.0-SNAPSHOT</webcontainer-api.version>
+    <naming-api.version>1.0.0-SNAPSHOT</naming-api.version>
   </properties>
 
   <scm>
@@ -69,6 +70,11 @@
       <groupId>com.peergreen.webcontainer</groupId>
       <artifactId>peergreen-webcontainer-api</artifactId>
       <version>${webcontainer-api.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.peergreen.naming</groupId>
+      <artifactId>peergreen-naming-api</artifactId>
+      <version>${naming-api.version}</version>
     </dependency>
     <dependency>
       <groupId>org.ow2.util.metadata</groupId>
