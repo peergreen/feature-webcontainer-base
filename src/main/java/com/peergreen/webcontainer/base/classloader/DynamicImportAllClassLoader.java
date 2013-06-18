@@ -21,11 +21,15 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Enumeration;
 
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleReference;
+import org.osgi.framework.FrameworkUtil;
+
 /**
  * ClassLoader that allows to load all classes exported on the OSGi framework.
  * @author Florent Benoit
  */
-public class DynamicImportAllClassLoader extends URLClassLoader {
+public class DynamicImportAllClassLoader extends URLClassLoader implements BundleReference {
 
     /**
      * Classloader of the bundle.
@@ -185,6 +189,11 @@ public class DynamicImportAllClassLoader extends URLClassLoader {
 
         // send the result
         return is;
+    }
+
+    @Override
+    public Bundle getBundle() {
+        return FrameworkUtil.getBundle(DynamicImportAllClassLoader.class);
     }
 
 }
