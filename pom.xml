@@ -29,8 +29,8 @@
   <name>Peergreen WebContainer Base</name>
 
   <properties>
-    <webcontainer-api.version>1.0.0-SNAPSHOT</webcontainer-api.version>
-    <naming-api.version>1.0.0-SNAPSHOT</naming-api.version>
+    <webcontainer-api.version>1.0.0</webcontainer-api.version>
+    <naming-api.version>1.0.0</naming-api.version>
   </properties>
 
   <scm>
@@ -63,7 +63,7 @@
     <dependency>
       <groupId>com.peergreen.deployment</groupId>
       <artifactId>deployment-api</artifactId>
-      <version>1.0.1-SNAPSHOT</version>
+      <version>1.0.1</version>
       <type>jar</type>
     </dependency>
     <dependency>
@@ -79,7 +79,7 @@
     <dependency>
       <groupId>org.ow2.util.metadata</groupId>
       <artifactId>metadata-war-api</artifactId>
-      <version>3.0.0-M1-SNAPSHOT</version>
+      <version>3.0.0-M1</version>
     </dependency>
     <dependency>
       <groupId>org.ow2.util.archive</groupId>
@@ -103,6 +103,22 @@
     </dependency>
     
   </dependencies>
+
+
+  <repositories>
+    <repository>
+      <id>peergreen.release</id>
+      <name>Peergreen Release Nexus</name>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <url>https://forge.peergreen.com/nexus/content/repositories/releases/</url>
+      <layout>default</layout>
+    </repository>
+  </repositories>
 
 
   <build>
