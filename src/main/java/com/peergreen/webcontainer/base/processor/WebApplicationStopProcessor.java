@@ -15,55 +15,37 @@
  */
 package com.peergreen.webcontainer.base.processor;
 
-import javax.naming.Context;
-import javax.naming.NamingException;
-
 import org.apache.felix.ipojo.annotations.Requires;
 
 import com.peergreen.deployment.ProcessorContext;
 import com.peergreen.deployment.ProcessorException;
 import com.peergreen.deployment.processor.Phase;
 import com.peergreen.deployment.processor.Processor;
-import com.peergreen.naming.JavaContextFactory;
 import com.peergreen.naming.JavaNamingManager;
 import com.peergreen.webcontainer.WebApplication;
 
 /**
- * Creates java context of the Web Application
+ * Perform actions while stopping
  * @author Florent Benoit
  */
 @Processor
-@Phase("JAVA_CONTEXT")
-public class WebApplicationJavaContextProcessor {
-
-    private final JavaContextFactory javaContextFactory;
+@Phase("STOP")
+public class WebApplicationStopProcessor {
 
     private final JavaNamingManager javaNamingManager;
 
 
-    public WebApplicationJavaContextProcessor(@Requires JavaContextFactory javaContextFactory, @Requires JavaNamingManager javaNamingManager) {
-        this.javaContextFactory = javaContextFactory;
+    public WebApplicationStopProcessor(@Requires JavaNamingManager javaNamingManager) {
         this.javaNamingManager = javaNamingManager;
     }
 
     /**
-     * Adds the java: context in the webapp
+     * Unbind the context for the given classloader
      */
     public void handle(WebApplication webApplication, ProcessorContext processorContext) throws ProcessorException {
 
-        ClassLoader classLoader = webApplication.getClassLoader();
-
-        // build java context
-        Context javaContext;
-        try {
-            javaContext = javaContextFactory.createContext("webapp");
-        } catch (NamingException e) {
-           throw new ProcessorException("Unable to build context", e);
-        }
-        webApplication.setJavaContext(javaContext);
-
-        // adds the bind
-        javaNamingManager.bindClassLoaderContext(classLoader, javaContext);
+        // unbind
+        javaNamingManager.unbindClassLoaderContext(webApplication.getClassLoader());
     }
 
 
