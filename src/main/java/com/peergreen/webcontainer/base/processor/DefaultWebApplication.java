@@ -24,7 +24,7 @@ import javax.naming.Context;
 
 import com.peergreen.deployment.Artifact;
 import com.peergreen.deployment.facet.archive.Archive;
-import com.peergreen.injection.AnnotatedClass;
+import com.peergreen.metadata.adapter.AnnotatedClass;
 import com.peergreen.webcontainer.WebApplication;
 
 public class DefaultWebApplication implements WebApplication {

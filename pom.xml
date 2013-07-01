@@ -29,7 +29,7 @@
   <name>Peergreen WebContainer Base</name>
 
   <properties>
-    <webcontainer-api.version>1.0.0</webcontainer-api.version>
+    <webcontainer-api.version>1.0.1-SNAPSHOT</webcontainer-api.version>
     <naming-api.version>1.0.0</naming-api.version>
   </properties>
 

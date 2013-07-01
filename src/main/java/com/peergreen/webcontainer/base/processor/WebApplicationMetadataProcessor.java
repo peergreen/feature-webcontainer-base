@@ -29,8 +29,8 @@ import com.peergreen.deployment.ProcessorContext;
 import com.peergreen.deployment.ProcessorException;
 import com.peergreen.deployment.processor.Phase;
 import com.peergreen.deployment.processor.Processor;
-import com.peergreen.injection.AnnotatedClass;
-import com.peergreen.injection.InjectionService;
+import com.peergreen.metadata.adapter.AnnotatedClass;
+import com.peergreen.metadata.adapter.MetadataAdapter;
 import com.peergreen.webcontainer.WebApplication;
 
 /**
@@ -43,14 +43,14 @@ public class WebApplicationMetadataProcessor {
 
     private final IWarMetadataFactory warMetadatFactory;
 
-    private final InjectionService injectionService;
+    private final MetadataAdapter metadataAdapter;
 
     private final IArchiveManager archiveManager;
 
 
-    public WebApplicationMetadataProcessor(@Requires IWarMetadataFactory warMetadataFactory, @Requires InjectionService injectionService, @Requires IArchiveManager archiveManager) {
+    public WebApplicationMetadataProcessor(@Requires IWarMetadataFactory warMetadataFactory, @Requires MetadataAdapter metadataAdapter, @Requires IArchiveManager archiveManager) {
         this.warMetadatFactory = warMetadataFactory;
-        this.injectionService = injectionService;
+        this.metadataAdapter = metadataAdapter;
         this.archiveManager = archiveManager;
     }
 
@@ -72,7 +72,7 @@ public class WebApplicationMetadataProcessor {
         processorContext.addFacet(IWarMetadata.class, warMetadata);
 
         // now gets the injection
-        Map<String, AnnotatedClass> map = injectionService.getInjection(artifact, warMetadata);
+        Map<String, AnnotatedClass> map = metadataAdapter.adapt(artifact, warMetadata);
         webApplication.setAnnotatedClasses(map);
 
     }
