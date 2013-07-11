@@ -15,15 +15,34 @@
  */
 package com.peergreen.webcontainer.base.classloader;
 
+import static org.osgi.framework.Constants.BUNDLE_MANIFESTVERSION;
+import static org.osgi.framework.Constants.BUNDLE_NAME;
+import static org.osgi.framework.Constants.BUNDLE_SYMBOLICNAME;
+import static org.osgi.framework.Constants.BUNDLE_VERSION;
+import static org.osgi.framework.Constants.EXPORT_PACKAGE;
+import static org.osgi.framework.Constants.FRAGMENT_HOST;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.List;
+import java.util.jar.Attributes;
+import java.util.jar.JarOutputStream;
+import java.util.jar.Manifest;
 
 import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleException;
 import org.osgi.framework.BundleReference;
 import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.wiring.FrameworkWiring;
+import org.ow2.util.log.Log;
+import org.ow2.util.log.LogFactory;
 
 /**
  * ClassLoader that allows to load all classes exported on the OSGi framework.
@@ -32,12 +51,38 @@ import org.osgi.framework.FrameworkUtil;
 public class DynamicImportAllClassLoader extends URLClassLoader implements BundleReference {
 
     /**
+     * List of packages already used for the fragment.
+     */
+    private final List<String> packagesForFragment;
+
+    /**
+     * Global filter for the auto fragment.
+     */
+    private final String globalFilter = System.getProperty("com.peergreen.webcontainer.base.classloader.automatic-fragment", "sun.*, com.sun.*");
+
+    /**
+     * Filters
+     */
+    private final List<String> filters;
+
+    /**
+     * Logger.
+     */
+    private final Log logger = LogFactory.getLog(DynamicImportAllClassLoader.class);
+
+    /**
      * Classloader of the bundle.
      */
     private final ClassLoader bundleClassLoader;
 
     public DynamicImportAllClassLoader() {
         super(new URL[0]);
+        this.packagesForFragment = new ArrayList<>();
+        this.filters = new ArrayList<>();
+        String[] split = this.globalFilter.split(",");
+        for (String pkg : split) {
+            filters.add(pkg.trim());
+        }
         this.bundleClassLoader = DynamicImportAllClassLoader.class.getClassLoader();
     }
 
@@ -55,7 +100,40 @@ public class DynamicImportAllClassLoader extends URLClassLoader implements Bundl
      */
     @Override
     public Class<?> loadClass(String name) throws ClassNotFoundException {
-        return this.bundleClassLoader.loadClass(name);
+        try {
+            return this.bundleClassLoader.loadClass(name);
+        } catch (ClassNotFoundException e) {
+
+            // matching filter ?
+            if (!match(name)) {
+                throw e;
+            }
+
+            // class not found, is that this class is available in the system classloader ?
+
+            Class<?> clazz = ClassLoader.getSystemClassLoader().loadClass(name);
+            if (clazz != null) {
+                // class has been found so add the fragment
+                addFragment(name.substring(0, name.lastIndexOf(".")));
+                return this.bundleClassLoader.loadClass(name);
+            }
+            // not in system classloader so throw the exception and without adding the fragment
+            throw e;
+        }
+    }
+
+    /**
+     * Check if the given classname match the package.
+     * @param className the name of the class
+     * @return true if the class is matching filter
+     */
+    protected boolean match(String className) {
+        for (String filter : filters) {
+            if (className.matches(filter)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 
@@ -194,6 +272,52 @@ public class DynamicImportAllClassLoader extends URLClassLoader implements Bundl
     @Override
     public Bundle getBundle() {
         return FrameworkUtil.getBundle(DynamicImportAllClassLoader.class);
+    }
+
+
+    /**
+     * Generates a fragment for the specified packageName
+     * @param packageName the name of the package to generate
+     * @throws ClassNotFoundException
+     */
+    protected void addFragment(String packageName) throws ClassNotFoundException {
+        if (packagesForFragment.contains(packageName)) {
+            return;
+        }
+
+        logger.warn("The application is requiring a package ''{0}'' that is not exported yet on the platform but is available in the system classloader. Enabling OSGi fragment for providing this package", packageName);
+
+        // add the fragment
+        packagesForFragment.add(packageName);
+
+        Manifest manifest = new Manifest();
+
+        manifest.getMainAttributes().put(Attributes.Name.MANIFEST_VERSION, "1.0");
+
+        manifest.getMainAttributes().putValue(EXPORT_PACKAGE, packageName);
+        manifest.getMainAttributes().putValue(BUNDLE_MANIFESTVERSION, "2");
+        manifest.getMainAttributes().putValue(BUNDLE_NAME, "Automatic generation of fragment bundle for package ".concat(packageName));
+        manifest.getMainAttributes().putValue(BUNDLE_SYMBOLICNAME, "peergreen.auto-fragment.".concat(packageName));
+        manifest.getMainAttributes().putValue(BUNDLE_VERSION, "1.0.0");
+        manifest.getMainAttributes().putValue(FRAGMENT_HOST, "system.bundle; extension:=framework");
+
+
+        byte[] bytes = null;
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream(); JarOutputStream jarOutputStream = new JarOutputStream(baos, manifest)) {
+            jarOutputStream.close();
+            bytes = baos.toByteArray();
+        } catch (IOException e) {
+            throw new ClassNotFoundException("Unable to generate a fragment for '" + packageName + "'.", e);
+        }
+
+        try (ByteArrayInputStream bais = new ByteArrayInputStream(bytes)) {
+           Bundle bundle = getBundle().getBundleContext().installBundle("file:///auto.fragment.for.".concat(packageName), bais);
+           FrameworkWiring frameworkWiring = getBundle().getBundleContext().getBundle(0).adapt(FrameworkWiring.class);
+           frameworkWiring.resolveBundles(Collections.singleton(bundle));
+        } catch (BundleException | IOException e) {
+            throw new ClassNotFoundException("Unable to generate a fragment for '" + packageName + "'.", e);
+        }
+
     }
 
 }
