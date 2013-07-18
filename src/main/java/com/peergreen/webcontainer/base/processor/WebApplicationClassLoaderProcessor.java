@@ -60,6 +60,18 @@ public class WebApplicationClassLoaderProcessor {
             throw new ProcessorException("Unable to create application classLoader", e);
         }
 
+        // WEB-INF/lib
+        File webInfLibDir = new File(rootWar + File.separator + "WEB-INF" + File.separator + "lib");
+        File[] libs = webInfLibDir.listFiles();
+        for (File lib : libs) {
+            try {
+                urls.add(lib.toURI().toURL());
+            } catch (MalformedURLException e) {
+                throw new ProcessorException("Unable to create application classLoader", e);
+            }
+        }
+
+
         // Create a WebApp ClassLoader
         ClassLoader appClassLoader;
             appClassLoader = new URLClassLoader(urls.toArray(new URL[urls.size()]), parentClassLoader);
