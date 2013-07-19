@@ -63,11 +63,13 @@ public class WebApplicationClassLoaderProcessor {
         // WEB-INF/lib
         File webInfLibDir = new File(rootWar + File.separator + "WEB-INF" + File.separator + "lib");
         File[] libs = webInfLibDir.listFiles();
-        for (File lib : libs) {
-            try {
-                urls.add(lib.toURI().toURL());
-            } catch (MalformedURLException e) {
-                throw new ProcessorException("Unable to create application classLoader", e);
+        if (libs != null) {
+            for (File lib : libs) {
+                try {
+                    urls.add(lib.toURI().toURL());
+                } catch (MalformedURLException e) {
+                    throw new ProcessorException("Unable to create application classLoader", e);
+                }
             }
         }
 
