@@ -49,7 +49,7 @@ public class WebApplicationUnpackProcessor {
             File f = new File(System.getProperty("java.io.tmpdir"), "unpacked");
             File unpacked = new File(f, webApplication.getArchiveName());
             try {
-                FileUtils.unpack(new JarFile(uri.getPath()), unpacked);
+                FileUtils.unpack(new JarFile(new File(uri)), unpacked);
             } catch (FileUtilsException | IOException e) {
                 throw new ProcessorException("Unable to unpack the jar", e);
             }
