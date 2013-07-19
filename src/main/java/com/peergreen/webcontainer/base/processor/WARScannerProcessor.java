@@ -58,13 +58,15 @@ public class WARScannerProcessor {
             contextPath = contextPath.substring(0, contextPath.length() - 1);
         }
 
-        webApplication.setArchiveName(contextPath);
-
         // Keep only the name of the file without any extension
         int lastSlash = contextPath.lastIndexOf("/");
         if (lastSlash != -1) {
             contextPath = contextPath.substring(lastSlash + 1, contextPath.length());
         }
+
+        // Sets the name of the web Application
+        webApplication.setArchiveName(contextPath);
+
         // remove the .extension
         int dot = contextPath.lastIndexOf(".");
         if (dot != -1) {
