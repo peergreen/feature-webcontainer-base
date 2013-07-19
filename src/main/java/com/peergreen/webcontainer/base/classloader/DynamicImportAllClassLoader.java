@@ -100,6 +100,12 @@ public class DynamicImportAllClassLoader extends URLClassLoader implements Bundl
      */
     @Override
     public Class<?> loadClass(String name) throws ClassNotFoundException {
+        // apply the filtering
+        if (name.startsWith("org.slf4j")) {
+            throw new ClassNotFoundException("class '" + name + "' has been filtered");
+        }
+
+
         try {
             return this.bundleClassLoader.loadClass(name);
         } catch (ClassNotFoundException e) {
