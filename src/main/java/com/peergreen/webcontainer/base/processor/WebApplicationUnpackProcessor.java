@@ -15,6 +15,8 @@
  */
 package com.peergreen.webcontainer.base.processor;
 
+import static java.lang.String.format;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -34,7 +36,7 @@ import com.peergreen.webcontainer.WebApplication;
 public class WebApplicationUnpackProcessor {
 
     /**
-     * If the archive is a war file then we will parse the web.xml and flag the archive as being a Web Application
+     * Unpack the WebApplication (if not already done)
      */
     public void handle(WebApplication webApplication, ProcessorContext processorContext) throws ProcessorException {
 
@@ -45,7 +47,7 @@ public class WebApplicationUnpackProcessor {
 
         // Needs to unpack war if not yet unpacked
         if (path.isFile()) {
-            // unpack
+            // unpack in temporary directory
             File f = new File(System.getProperty("java.io.tmpdir"), "unpacked");
             File unpacked = new File(f, webApplication.getArchiveName());
             try {
@@ -53,10 +55,17 @@ public class WebApplicationUnpackProcessor {
             } catch (FileUtilsException | IOException e) {
                 throw new ProcessorException("Unable to unpack the jar", e);
             }
-            webApplication.setUnpackedDirectory(unpacked);
-        } else {
-            webApplication.setUnpackedDirectory(path);
+            path = unpacked;
         }
+
+        // Store canonical path
+        try {
+            path = path.getCanonicalFile();
+        } catch (IOException e) {
+            throw new ProcessorException(format("Cannot obtain canonical File for %s", path.getName()), e);
+        }
+
+        webApplication.setUnpackedDirectory(path);
 
     }
 
