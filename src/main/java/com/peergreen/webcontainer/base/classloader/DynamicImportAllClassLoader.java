@@ -104,6 +104,9 @@ public class DynamicImportAllClassLoader extends URLClassLoader implements Bundl
         if (name.startsWith("org.slf4j")) {
             throw new ClassNotFoundException("class '" + name + "' has been filtered");
         }
+        if (name.startsWith("org.apache.commons.logging.")) {
+            throw new ClassNotFoundException("class '" + name + "' has been filtered");
+        }
 
 
         try {
