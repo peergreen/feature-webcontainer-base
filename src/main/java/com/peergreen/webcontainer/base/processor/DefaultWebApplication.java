@@ -71,7 +71,7 @@ public class DefaultWebApplication implements WebApplication {
         this.annotatedClasses = annotatedClasses;
     }
 
-
+    @Override
     public void setContextPath(String contextPath) {
         this.contextPath = contextPath;
     }
