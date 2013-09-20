@@ -29,8 +29,10 @@
   <name>Peergreen WebContainer Base</name>
 
   <properties>
-    <webcontainer-api.version>1.0.1-SNAPSHOT</webcontainer-api.version>
+    <deployment-api.version>1.0.2</deployment-api.version>
+    <webcontainer-api.version>1.0.1</webcontainer-api.version>
     <naming-api.version>1.0.0</naming-api.version>
+    <metadata-war-api.version>3.0.0-M2</metadata-war-api.version>
   </properties>
 
   <scm>
@@ -63,7 +65,7 @@
     <dependency>
       <groupId>com.peergreen.deployment</groupId>
       <artifactId>deployment-api</artifactId>
-      <version>1.0.1</version>
+      <version>${deployment-api.version}</version>
       <type>jar</type>
     </dependency>
     <dependency>
@@ -79,7 +81,7 @@
     <dependency>
       <groupId>org.ow2.util.metadata</groupId>
       <artifactId>metadata-war-api</artifactId>
-      <version>3.0.0-M1</version>
+      <version>${metadata-war-api.version}</version>
     </dependency>
     <dependency>
       <groupId>org.ow2.util.archive</groupId>
