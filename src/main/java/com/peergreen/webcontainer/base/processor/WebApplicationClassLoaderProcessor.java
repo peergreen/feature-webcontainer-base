@@ -73,16 +73,11 @@ public class WebApplicationClassLoaderProcessor {
             }
         }
 
-
         // Create a WebApp ClassLoader
         ClassLoader appClassLoader;
             appClassLoader = new URLClassLoader(urls.toArray(new URL[urls.size()]), parentClassLoader);
         webApplication.setClassLoader(appClassLoader);
 
     }
-
-
-
-
 
 }
