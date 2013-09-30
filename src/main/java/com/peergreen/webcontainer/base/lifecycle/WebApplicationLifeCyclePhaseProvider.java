@@ -24,6 +24,8 @@ import com.peergreen.webcontainer.WebApplication;
 
 public class WebApplicationLifeCyclePhaseProvider implements FacetLifeCyclePhaseProvider<WebApplication> {
 
+    public static final String INJECTION = "INJECTION";
+
     private final List<String> deployPhases;
     private final List<String> updatePhases;
     private final List<String> undeployPhases;
@@ -34,6 +36,7 @@ public class WebApplicationLifeCyclePhaseProvider implements FacetLifeCyclePhase
         deployPhases.add("CLASSLOADER");
         deployPhases.add("METADATA");
         deployPhases.add("JAVA_CONTEXT");
+        deployPhases.add("INJECTION");
         deployPhases.add("INIT");
         deployPhases.add("START");
 

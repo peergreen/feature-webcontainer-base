@@ -15,17 +15,18 @@
  */
 package com.peergreen.webcontainer.base.processor;
 
-import org.apache.felix.ipojo.annotations.Requires;
-import org.ow2.util.archive.api.IArchive;
-import org.ow2.util.archive.api.IArchiveManager;
-import org.ow2.util.ee.metadata.war.api.IWarMetadata;
-import org.ow2.util.ee.metadata.war.api.IWarMetadataFactory;
-import org.ow2.util.ee.metadata.war.api.exceptions.WARMetadataException;
+import java.util.Map;
 
+import org.apache.felix.ipojo.annotations.Requires;
+import org.ow2.util.ee.metadata.war.api.IWarMetadata;
+
+import com.peergreen.deployment.Artifact;
 import com.peergreen.deployment.ProcessorContext;
 import com.peergreen.deployment.ProcessorException;
 import com.peergreen.deployment.processor.Phase;
 import com.peergreen.deployment.processor.Processor;
+import com.peergreen.metadata.adapter.AnnotatedClass;
+import com.peergreen.metadata.adapter.MetadataAdapter;
 import com.peergreen.webcontainer.WebApplication;
 
 /**
@@ -33,33 +34,27 @@ import com.peergreen.webcontainer.WebApplication;
  * @author Florent Benoit
  */
 @Processor
-@Phase("METADATA")
-public class WebApplicationMetadataProcessor {
+@Phase("INJECTION")
+public class WebApplicationInjectionProcessor {
 
-    private final IWarMetadataFactory warMetadatFactory;
+    private final MetadataAdapter metadataAdapter;
 
-    private final IArchiveManager archiveManager;
-
-    public WebApplicationMetadataProcessor(@Requires IWarMetadataFactory warMetadataFactory,  @Requires IArchiveManager archiveManager) {
-        this.warMetadatFactory = warMetadataFactory;
-        this.archiveManager = archiveManager;
+    public WebApplicationInjectionProcessor(@Requires MetadataAdapter metadataAdapter) {
+        this.metadataAdapter = metadataAdapter;
     }
 
     /**
-     * If the archive is a war file then we will parse the web.xml and flag the archive as being a Web Application
+     * Perform the injection
      */
     public void handle(WebApplication webApplication, ProcessorContext processorContext) throws ProcessorException {
 
-        IArchive archive = archiveManager.getArchive(webApplication.getUnpackedDirectory());
+        Artifact artifact = webApplication.getArtifact();
+        IWarMetadata warMetadata = artifact.as(IWarMetadata.class);
 
-        // needs to wrap PG archive into OW2 archive
-        IWarMetadata warMetadata = null;
-        try {
-            warMetadata = warMetadatFactory.createArchiveMetadata(archive, webApplication.getClassLoader());
-        } catch (WARMetadataException e) {
-            throw new ProcessorException("Unable to scan metadata", e);
-        }
-        processorContext.addFacet(IWarMetadata.class, warMetadata);
+        // now gets the injection
+        Map<String, AnnotatedClass> map = metadataAdapter.adapt(artifact, warMetadata);
+        webApplication.setAnnotatedClasses(map);
+
     }
 
 
