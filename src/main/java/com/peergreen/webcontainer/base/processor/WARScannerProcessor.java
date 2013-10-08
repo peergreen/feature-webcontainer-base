@@ -72,6 +72,10 @@ public class WARScannerProcessor {
         if (dot != -1) {
             contextPath = contextPath.substring(0, dot);
         }
+
+        // Defined the module name
+        webApplication.setModuleName(contextPath);
+
         contextPath = "/".concat(contextPath);
         webApplication.setContextPath(contextPath);
 
