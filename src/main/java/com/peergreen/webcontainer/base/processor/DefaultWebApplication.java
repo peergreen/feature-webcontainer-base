@@ -53,8 +53,11 @@ public class DefaultWebApplication implements WebApplication {
     private Context javaModuleContext;
     private Context javaAppContext;
 
+    private final Collection<URL> extraTlds;
+
     public DefaultWebApplication(Artifact artifact) {
         this.artifact = artifact;
+        this.extraTlds = new ArrayList<>();
     }
 
 
@@ -201,5 +204,13 @@ public class DefaultWebApplication implements WebApplication {
     public void setJavaAppContext(Context javaAppContext) {
         this.javaAppContext = javaAppContext;
     }
+
+
+    @Override
+    public Collection<URL> getExtraTlds() {
+        return extraTlds;
+    }
+
+
 
 }
