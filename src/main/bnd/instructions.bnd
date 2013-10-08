@@ -2,5 +2,5 @@ Export-Package: com.peergreen.webcontainer;version=${webcontainer-api.version}
 Private-Package: com.peergreen.webcontainer.base.*, org.ow2.util.file
 
 # * for the OSGi dynamic import wildcard classloader
-DynamicImport-Package: javax.transaction;version=1.1,javax.transaction.xa;version=1.1,*
+DynamicImport-Package: javax.transaction;version=1.1,javax.transaction.xa;version=1.1,javax.annotation;version=1.1,*
 
