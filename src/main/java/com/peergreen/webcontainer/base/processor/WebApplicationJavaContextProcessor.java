@@ -53,20 +53,64 @@ public class WebApplicationJavaContextProcessor {
 
         ClassLoader classLoader = webApplication.getClassLoader();
 
+        // Gets the context
+        Context moduleContext = webApplication.getJavaModuleContext();
+        Context appContext = webApplication.getJavaAppContext();
+
+        if (appContext == null) {
+            try {
+                appContext = javaContextFactory.createContext("AppContext");
+            } catch (NamingException e) {
+                throw new ProcessorException("Unable to build context", e);
+            }
+        }
+
+        // Needs to bind the application name
+        if (webApplication.getApplicationName() != null) {
+            try {
+                appContext.bind("AppName", webApplication.getApplicationName());
+            } catch (NamingException e) {
+                throw new ProcessorException("Unable to build context", e);
+            }
+        }
+
+        // Create Module context
+        if (moduleContext == null) {
+            try {
+                moduleContext = javaContextFactory.createContext("ModuleContext");
+            } catch (NamingException e) {
+                throw new ProcessorException("Unable to build context", e);
+            }
+        }
+        // Bind Module Name
+        try {
+            moduleContext.bind("ModuleName", webApplication.getModuleName());
+        } catch (NamingException e) {
+            throw new ProcessorException("Unable to build context", e);
+        }
+
         // build java context
         Context javaContext;
         try {
-            javaContext = javaContextFactory.createContext("webapp");
+            javaContext = javaContextFactory.createContext("webapp", appContext, moduleContext);
         } catch (NamingException e) {
            throw new ProcessorException("Unable to build context", e);
         }
+
+        // Creates comp/env
+        try {
+            javaContext.createSubcontext("comp/env");
+        } catch (NamingException e) {
+            throw new ProcessorException("Unable to build context", e);
+        }
+
+        webApplication.setJavaAppContext(appContext);
+        webApplication.setJavaModuleContext(moduleContext);
         webApplication.setJavaContext(javaContext);
 
         // adds the bind
         javaNamingManager.bindClassLoaderContext(classLoader, javaContext);
     }
-
-
 
 
 }
