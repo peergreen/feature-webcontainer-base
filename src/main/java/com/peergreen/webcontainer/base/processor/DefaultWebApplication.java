@@ -17,6 +17,9 @@ package com.peergreen.webcontainer.base.processor;
 
 import java.io.File;
 import java.net.URI;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -43,8 +46,12 @@ public class DefaultWebApplication implements WebApplication {
     private Map<String, AnnotatedClass> annotatedClasses;
 
     private String archiveName;
+    private String applicationName;
+    private String moduleName;
 
     private Context javaContext;
+    private Context javaModuleContext;
+    private Context javaAppContext;
 
     public DefaultWebApplication(Artifact artifact) {
         this.artifact = artifact;
@@ -137,6 +144,30 @@ public class DefaultWebApplication implements WebApplication {
 
 
     @Override
+    public String getApplicationName() {
+        return applicationName;
+    }
+
+
+    @Override
+    public void setApplicationName(String applicationName) {
+        this.applicationName = applicationName;
+    }
+
+
+    @Override
+    public String getModuleName() {
+        return moduleName;
+    }
+
+
+    @Override
+    public void setModuleName(String moduleName) {
+        this.moduleName = moduleName;
+    }
+
+
+    @Override
     public Context getJavaContext() {
         return javaContext;
     }
@@ -145,6 +176,30 @@ public class DefaultWebApplication implements WebApplication {
     @Override
     public void setJavaContext(Context javaContext) {
         this.javaContext = javaContext;
+    }
+
+
+    @Override
+    public Context getJavaModuleContext() {
+        return javaModuleContext;
+    }
+
+
+    @Override
+    public void setJavaModuleContext(Context javaModuleContext) {
+        this.javaModuleContext = javaModuleContext;
+    }
+
+
+    @Override
+    public Context getJavaAppContext() {
+        return javaAppContext;
+    }
+
+
+    @Override
+    public void setJavaAppContext(Context javaAppContext) {
+        this.javaAppContext = javaAppContext;
     }
 
 }
