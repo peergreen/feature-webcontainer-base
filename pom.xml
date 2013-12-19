@@ -30,7 +30,7 @@
 
   <properties>
     <deployment-api.version>1.0.2</deployment-api.version>
-    <webcontainer-api.version>1.0.2-SNAPSHOT</webcontainer-api.version>
+    <webcontainer-api.version>1.0.2</webcontainer-api.version>
     <naming-api.version>1.0.0</naming-api.version>
     <metadata-war-api.version>3.0.0-M2</metadata-war-api.version>
   </properties>
